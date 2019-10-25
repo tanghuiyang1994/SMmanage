@@ -1,0 +1,87 @@
+<template>
+  <div
+    class="login"
+    style="backgroundImage:url('https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1571926479407&di=d34036b848880a6abf0ec40bb1c394e6&imgtype=0&src=http%3A%2F%2Fimg.pconline.com.cn%2Fimages%2Fbbs4%2Fattachment%2F20081%2F6%2F1199625490253.jpg')"
+  >
+    <div class="loginbox">
+      <h2>阳阳超市管理系统</h2>
+      <div>
+        <p>
+          用户名:
+          <el-input placeholder="请输入内容" v-model="user" clearable></el-input>
+        </p>
+
+        <p>
+          密码:
+          <el-input placeholder="请输入密码" v-model="pwd" show-password></el-input>
+        </p>
+        <div class="loginbtn">
+          <el-button type="primary" style="width:200px;" @click="goToIndex">登录</el-button>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      user: "",
+      pwd: ""
+    };
+  },
+  methods: {
+    goToIndex() {
+      this.$router.history.push("/index");
+    }
+  }
+};
+</script>
+
+<style lang="less" scoped>
+.login {
+  width: 100%;
+  height: 100%;
+  background-size: 100%;
+  background-repeat: no-repeat;
+
+  display: flex;
+  .loginbox {
+    width: 600px;
+    height: 500px;
+    padding: 20px;
+    background-color: rgba(0, 0, 0, 0.6);
+    margin: auto;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    h2 {
+      color: #fff;
+      text-align: center;
+      font-size: 40px;
+      margin-bottom: 60px;
+      margin-top: 50px;
+    }
+
+    p {
+      color: #fff;
+      margin-top: 30px;
+      font-size: 20px;
+      width: 500px;
+      display: flex;
+      justify-content: space-between;
+    }
+    .el-input {
+      width: 400px;
+    }
+    .loginbtn{
+     width: 100%;
+     display: flex;
+     justify-content: center;
+     margin-top: 60px;
+    }
+  }
+}
+</style>
