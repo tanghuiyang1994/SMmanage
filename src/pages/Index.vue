@@ -45,7 +45,7 @@
 </template>
 
 <script>
-import {list} from '../json/json.js'
+import tree from '../json/tree.json'
 export default {
   data(){
     return{
@@ -53,8 +53,8 @@ export default {
     }
   },
   created(){
-    this.datalist=list
-    console.log(this.datalist)
+    this.datalist=tree
+    
   },
   methods: {}
 };

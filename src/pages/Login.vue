@@ -15,6 +15,9 @@
           密码:
           <el-input placeholder="请输入密码" v-model="pwd" show-password></el-input>
         </p>
+        <div class="msg" >
+          <span v-show="show">用户名和密码不正确,请重新输入</span>
+        </div>
         <div class="loginbtn">
           <el-button type="primary" style="width:200px;" @click="goToIndex">登录</el-button>
         </div>
@@ -24,16 +27,26 @@
 </template>
 
 <script>
+import {loginApi} from '../apis/api'
 export default {
   data() {
     return {
       user: "",
-      pwd: ""
+      pwd: "",
+      show:false,
     };
   },
   methods: {
     goToIndex() {
-      this.$router.history.push("/index");
+      loginApi(this.user,this.pwd)
+      .then(res=>{
+        if(res.data=='ok'){
+           this.$router.history.push("/index");
+        }else{
+          this.show=true;
+        }
+      })
+     
     }
   }
 };
@@ -61,7 +74,7 @@ export default {
       color: #fff;
       text-align: center;
       font-size: 40px;
-      margin-bottom: 60px;
+      margin-bottom: 50px;
       margin-top: 50px;
     }
 
@@ -73,6 +86,13 @@ export default {
       display: flex;
       justify-content: space-between;
     }
+    .msg{
+      width: 100%;
+      height: 30px;
+      color: red;
+      text-align: center;
+      margin-top: 20px;
+    }
     .el-input {
       width: 400px;
     }
@@ -80,7 +100,7 @@ export default {
      width: 100%;
      display: flex;
      justify-content: center;
-     margin-top: 60px;
+     margin-top: 50px;
     }
   }
 }
