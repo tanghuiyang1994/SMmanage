@@ -4,8 +4,8 @@
     <el-header style="display:flex;">
       <div class="manageTitle">阳阳超市管理系统</div>
       <div style="display:flex;">
-        <div class="userMsg">您好,admin</div>
-        <div class="exit">管理首页 | 退出系统</div>
+        <div class="userMsg">您好, <span @click="gologin">{{user}}</span></div>
+        <div class="exit" v-show="user=='请登录'?false:true">管理首页 | 退出系统</div>
       </div>
     </el-header>
     <!-- 内容 -->
@@ -45,18 +45,37 @@
 </template>
 
 <script>
-import tree from '../json/tree.json'
+import tree from '../json/tree.json';
+import {verifytoken} from '@/apis/api';
 export default {
   data(){
     return{
      datalist:[],
+     user:'请登录',
     }
   },
   created(){
-    this.datalist=tree
+    
+    this.datalist=tree.filter(item=>item.userGroup.includes(localStorage.userGroup))//通过用户登录身份来显示不同的菜单
+    
+    
+    verifytoken(localStorage.token).then(res=>{
+      if(res.data=='timeout'){
+        this.user='请登录';
+       
+      }else if(res.data=='vaild'){
+        this.user=localStorage.user;
+      }
+    })
     
   },
-  methods: {}
+  methods: {
+     gologin(){
+      
+          if(this.user=='请登录')
+          this.$router.history.push('/')
+        }
+  }
 };
 </script>
 

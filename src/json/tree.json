@@ -3,6 +3,7 @@
         "index": "product",
         "icon": "",
         "title": "商品管理",
+        "userGroup":["0","1","2"],
         "children": [
             {
                 "path": "/index/product",
@@ -18,6 +19,7 @@
         "index": "stock",
         "icon": "",
         "title": "进货管理",
+        "userGroup":["0","1","2"],
         "children": [
             {
                 "path": "/index/stock",
@@ -33,6 +35,7 @@
         "index": "shipment",
         "icon": "",
         "title": "出货管理",
+        "userGroup":["0","1","2"],
         "children": [
             {
                 "path": "/index/shipment",
@@ -52,6 +55,7 @@
         "index": "statistics",
         "icon": "",
         "title": "统计管理",
+        "userGroup":["0","1"],
         "children": [
             {
                 "path": "/index/statistics",
@@ -67,6 +71,7 @@
         "index": "account",
         "icon": "",
         "title": "账号管理",
+        "userGroup":["0"],
         "children": [
             {
                 "path": "/index/account",
@@ -86,6 +91,7 @@
         "index": "vip",
         "icon": "",
         "title": "会员管理",
+        "userGroup":["0","1"],
         "children": [
             {
                 "path": "/index/vip",

@@ -1,5 +1,6 @@
 <template>
   <el-tabs type="border-card">
+    
     <el-tab-pane label="添加账号">
       <p class="title">用户名:</p>
       <el-input placeholder="请输入用户名" v-model="user" clearable></el-input>
@@ -16,7 +17,9 @@
           :value="item.value"
         ></el-option>
       </el-select>
-      <div class="msg"><span v-show="show">用户名或密码不正确,请重新输入</span></div>
+      <div class="msg">
+        <span v-show="show">用户名或密码不正确,请重新输入</span>
+      </div>
       <p class="add">
         <el-button type="primary" @click="addacc">添加</el-button>
       </p>
@@ -56,8 +59,10 @@ export default {
         addAccApi(this.user,this.pwd,this.value)
         .then(res=>{
           if(res.data=='ok'){
-              alert('添加成功')
-              this.$router.history.push('/index/account')
+             this.$message({
+          message: '账号添加成功!!',
+          type: 'success'
+        });
           }
         })
      }else{
@@ -76,8 +81,8 @@ export default {
 .add {
   padding: 10px 0;
 }
-.msg{
-  color:red;
+.msg {
+  color: red;
   width: 300px;
   height: 20px;
   text-align: center;

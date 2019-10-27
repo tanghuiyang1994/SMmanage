@@ -40,7 +40,12 @@ export default {
     goToIndex() {
       loginApi(this.user,this.pwd)
       .then(res=>{
-        if(res.data=='ok'){
+        
+        if(res.data.msg=='ok'){
+          this.show=false,
+          localStorage.token=res.data.token;
+          localStorage.user=this.user;
+          localStorage.userGroup=res.data.userGroup;
            this.$router.history.push("/index");
         }else{
           this.show=true;
