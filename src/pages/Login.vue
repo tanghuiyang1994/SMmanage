@@ -34,23 +34,35 @@ export default {
       user: "",
       pwd: "",
       show:false,
+      flag:true,
     };
   },
   methods: {
+   
+    
     goToIndex() {
-      loginApi(this.user,this.pwd)
+      if(this.flag){//定义标杆,设置防抖节流
+         loginApi(this.user,this.pwd)
       .then(res=>{
-        
+
         if(res.data.msg=='ok'){
           this.show=false,
           localStorage.token=res.data.token;
           localStorage.user=this.user;
           localStorage.userGroup=res.data.userGroup;
+          localStorage.id=res.data.id;
+          localStorage.password=res.data.pwd;
            this.$router.history.push("/index");
         }else{
           this.show=true;
         }
+        this.flag=false;
+        setTimeout(()=>{///设置定时器避免用户多次点击导致服务器性能浪费
+          this.flag=true;
+        },3000)
       })
+      }
+     
      
     }
   }

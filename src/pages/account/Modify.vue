@@ -1,27 +1,22 @@
 <template>
   <el-tabs type="border-card">
     <el-tab-pane label="密码修改">
-      <el-form
-        :model="ruleForm"
-        status-icon
-        :rules="rules"
-        ref="ruleForm"
-        label-width="100px"
-        class="demo-ruleForm"
-      >
+      <el-form status-icon ref="ruleForm" label-width="100px" class="demo-ruleForm">
         <el-form-item label="原密码">
-          <el-input type="password" v-model="ruleForm.oldpwd" autocomplete="off"></el-input>
+          <el-input placeholder="请输入密码" v-model="oldpwd" show-password></el-input>
         </el-form-item>
         <el-form-item label="新密码" prop="pass">
-          <el-input type="password" v-model="ruleForm.pass" autocomplete="off"></el-input>
+          <el-input placeholder="请输入密码" v-model="newpwd1" show-password></el-input>
         </el-form-item>
-        <el-form-item label="新密码" prop="checkPass">
-          <el-input type="password" v-model="ruleForm.checkPass" autocomplete="off"></el-input>
+        <el-form-item label="确认密码" prop="checkPass">
+          <el-input placeholder="请输入密码" v-model="newpwd2" show-password></el-input>
+          <div style="color:red;width:200px;height:20px;">
+            <span v-show="show">两次密码不一致</span>
+          </div>
         </el-form-item>
 
         <el-form-item>
-          <el-button type="primary" @click="submitForm('ruleForm')">提交</el-button>
-          <el-button @click="resetForm('ruleForm')">重置</el-button>
+          <el-button type="primary" @click="changepwd">确认修改</el-button>
         </el-form-item>
       </el-form>
     </el-tab-pane>
@@ -29,65 +24,33 @@
 </template>
 
 <script>
+import { changepwd } from "@/apis/api";
 export default {
   data() {
-    var checkAge = (rule, value, callback) => {
-      if (!value) {
-        return callback(new Error("年龄不能为空"));
-      }
-      setTimeout(() => {
-        if (!Number.isInteger(value)) {
-          callback(new Error("请输入数字值"));
-        } else {
-          callback();
-        }
-      }, 1000);
-    };
-    var validatePass = (rule, value, callback) => {
-      if (value === "") {
-        callback(new Error("请输入密码"));
-      } else {
-        if (this.ruleForm.checkPass !== "") {
-          this.$refs.ruleForm.validateField("checkPass");
-        }
-        callback();
-      }
-    };
-    var validatePass2 = (rule, value, callback) => {
-      if (value === "") {
-        callback(new Error("请再次输入密码"));
-      } else if (value !== this.ruleForm.pass) {
-        callback(new Error("两次输入密码不一致!"));
-      } else {
-        callback();
-      }
-    };
     return {
-      ruleForm: {
-        pass: "",
-        checkPass: "",
-        oldpwd: ""
-      },
-      rules: {
-        pass: [{ validator: validatePass, trigger: "blur" }],
-        checkPass: [{ validator: validatePass2, trigger: "blur" }],
-        oldpwd: [{ validator: checkAge, trigger: "blur" }]
-      }
+      oldpwd: "",
+      newpwd1: "",
+      newpwd2: "",
+      show: false
     };
   },
+  created() {
+    this.oldpwd = localStorage.password;
+  },
   methods: {
-    submitForm(formName) {
-      this.$refs[formName].validate(valid => {
-        if (valid) {
-          alert("修改成功!");
-          this.$router.history.push("account");
-        } else {
-          return false;
-        }
-      });
-    },
-    resetForm(formName) {
-      this.$refs[formName].resetFields();
+    changepwd() {
+      if (this.newpwd1 === this.newpwd2) {
+        this.show = false;
+        changepwd(localStorage.id, this.newpwd1).then(res => {
+          localStorage.password=this.newpwd1;
+          this.$message({
+            message: "密码修改成功!!!",
+            type: "success"
+          });
+        });
+      } else {
+        this.show = true;
+      }
     }
   }
 };

@@ -26,12 +26,14 @@ router.post('/login', (req, res) => {
     if (data.length != 0) {//登录成功
 
       var token = jwt.sign({}, tokenkey, {
-        expiresIn: 60*30
+        expiresIn: 60 * 30
       })
       res.send({
         msg: 'ok',
         token,
-        userGroup:data[0].userGroup
+        userGroup: data[0].userGroup,
+        id: data[0].id,
+        pwd: data[0].password,
       })
     } else {
       res.send({
@@ -44,11 +46,11 @@ router.post('/login', (req, res) => {
 
 //-----------------------token---------------------------//
 //验证token
-router.get('/verifytoken',(req,res)=>{
-  jwt.verify(req.query.token,tokenkey,(err,decode)=>{
-    if(err){//token过期
+router.get('/verifytoken', (req, res) => {
+  jwt.verify(req.query.token, tokenkey, (err, decode) => {
+    if (err) {//token过期
       res.send('timeout')
-    }else{//token还有效
+    } else {//token还有效
       res.send('vaild')
 
     }
@@ -106,28 +108,51 @@ router.post('/changepwd', (req, res) => {
 
 //--------------------商品管理模块-----------------------//
 //商品管理
-//数据条数接口
-router.get('/total', (req, res) => {
-  var sql = `SELECT COUNT(*) FROM commodity`;
-  con.query(sql, (err, data) => {
-    if (err) throw err;
-    res.send(data);
-  })
-})
-//分页查询
+//分页查询+数据总条数
 router.get('/product', (req, res) => {
   var pageNum = req.query.pageNum
   var currentPage = req.query.currentPage
+  var searchname = req.query.searchname//搜索商品名
+  var searchcategory = req.query.searchcategory//搜索的分类
+  let sql;
+  let totalsql;
+  if (searchname && searchname != '') {//如果进行了搜索,就执行搜索之后的sql
+    if (searchcategory == '' || searchcategory == "全部分类") {//如果是全部分类输入商品名
+      sql = `select * from commodity where name like '%${searchname}%' LIMIT ${(currentPage - 1) * pageNum},${pageNum}`;
+      totalsql = `SELECT COUNT(*) from commodity where name like '%${searchname}%'`;
+    } else {
+      sql = `select * from commodity where name like '%${searchname}%' AND category='${searchcategory}' LIMIT ${(currentPage - 1) * pageNum},${pageNum}`;
+      totalsql = `SELECT COUNT(*) from commodity where name like '%${searchname}%' AND category='${searchcategory}'`;
+    }
 
-  var sql = `SELECT * FROM commodity LIMIT ${(currentPage - 1) * pageNum},${pageNum}`
+  } else if (searchname == '' && searchcategory) {//如果只选中了分类,没有输入商品搜索的sql
+    if (searchcategory == '全部分类') {
+      sql = `SELECT * FROM commodity LIMIT ${(currentPage - 1) * pageNum},${pageNum}`;
+      totalsql = `SELECT COUNT(*) FROM commodity`;
+    } else {
+      sql = `select * from commodity where category='${searchcategory}' LIMIT ${(currentPage - 1) * pageNum},${pageNum}`;
+      totalsql = `SELECT COUNT(*) from commodity where category='${searchcategory}'`;
+    }
+
+  } else {//如果没有进行搜索,进行正常sql
+    sql = `SELECT * FROM commodity LIMIT ${(currentPage - 1) * pageNum},${pageNum}`;
+    totalsql = `SELECT COUNT(*) FROM commodity`;
+  }
+
+
   con.query(sql, (err, data) => {
     if (err) throw err;
     //res.send(data);
-    if (data.length != 0) {
-      res.send(data)
-    } else {
-      res.send('fail')
-    }
+
+    con.query(totalsql, (totalerr, totaldata) => {
+      if (totalerr) throw totalerr;
+      res.send({
+        data,//返回当前页的数据数组
+        total: totaldata[0]['COUNT(*)']//返回数据条数
+      });
+
+    })
+
   })
 })
 //添加商品
